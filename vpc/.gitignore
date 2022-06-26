@@ -1,3 +1,4 @@
 *.bakcup
 *.tfstate
 .terraform
+terraform.tfstate.backup
