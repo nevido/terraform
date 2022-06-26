@@ -1,0 +1,3 @@
+*.bakcup
+*.tfstate
+.terraform
