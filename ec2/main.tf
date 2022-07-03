@@ -38,10 +38,7 @@ locals {
   echo "will make script or file after"
   EOT
 
-  tags = {
-    Owner       = "user"
-    Environment = "dev"
-  }
+
 }
 
 
