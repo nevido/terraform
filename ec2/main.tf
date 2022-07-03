@@ -16,11 +16,16 @@ locals {
   name   = "example-ec2-complete"
   region = "ap-northeast-2"
   vpc_name = "simple-vpc"
+  service_name = "webserver"
   key_name = "cloud"
   ami = "ami-0e5732e0fc87ab42e"
   instance_type = "t2.micro"
   pub = 1           # public 에 생성할 서버 수량
   priva = 1         # private에 생성할 서버 수량
+  owner = "jaeyonglee"
+  team = "infra-1"
+  
+  
   
   ######### Don't touch #######################################
   public_sub =  data.terraform_remote_state.vpc.outputs.public_subnets
@@ -55,10 +60,12 @@ module "ec2_instance" {
   pub = local.pub
   priva = local.priva
   azs = local.azs
+  vpc_name = local.vpc_name
+  service_name = local.service_name
   
 tags = {
-  Terraform = "true"
-  Environment = "dev"
+  Terraform = local.owner
+  Environment = local.team
 }
 }
 

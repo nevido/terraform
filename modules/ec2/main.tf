@@ -17,9 +17,14 @@ resource "aws_instance" "private" {
   subnet_id = element(var.private_subnets,count.index)
   key_name             = var.key_name
   monitoring           = var.monitoring
+  
+  tags = merge(var.tags,{
+    Name = "${var.vpc_name}-${var.service_name}-private-${count.index+1}"
+   },
+  )
 
   }
-  
+
 resource "aws_instance" "pub" {
   count = local.create && var.pub > 0 ? var.pub : 0
 
@@ -32,6 +37,10 @@ resource "aws_instance" "pub" {
   subnet_id = element(var.public_subnets,count.index)
   key_name             = var.key_name
   monitoring           = var.monitoring
-
-  }
   
+  tags = merge(var.tags,{
+    Name = "${var.vpc_name}-${var.service_name}-public-${count.index+1}"
+   },
+  )
+
+ }

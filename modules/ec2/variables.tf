@@ -359,3 +359,12 @@ variable "azs" {
   type        = list(string)
   default     = []
 }
+
+variable "vpc_name" {
+  type = string
+}
+
+
+variable "service_name" {
+  type = string
+}
