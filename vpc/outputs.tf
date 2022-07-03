@@ -533,3 +533,7 @@ output "database_network_acl_arn" {
 #   description = "The ARN of the IAM role used when pushing logs to Cloudwatch log group"
 #   value       = module.vpc.vpc_flow_log_cloudwatch_iam_role_arn
 # }
+output "azs" {
+  description = "ID of the database network ACL"
+  value       = module.vpc.azs
+}

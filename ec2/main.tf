@@ -1,0 +1,78 @@
+provider "aws" {
+  region = local.region
+}
+
+
+data "terraform_remote_state" "vpc" {
+  backend = "local"
+  config = {
+    path = "../vpc/terraform.tfstate"
+  }
+}
+
+### 사용자 입력 부분 ###
+
+locals {
+  name   = "example-ec2-complete"
+  region = "ap-northeast-2"
+  vpc_name = "simple-vpc"
+  key_name = "cloud"
+  ami = "ami-0e5732e0fc87ab42e"
+  instance_type = "t2.micro"
+  pub = 1           # public 에 생성할 서버 수량
+  priva = 1         # private에 생성할 서버 수량
+  
+  ######### Don't touch #######################################
+  public_sub =  data.terraform_remote_state.vpc.outputs.public_subnets
+  private_sub = data.terraform_remote_state.vpc.outputs.private_subnets
+  database_sub = data.terraform_remote_state.vpc.outputs.database_subnets
+  security_group_default = data.terraform_remote_state.vpc.outputs.default_security_group_id
+  azs = data.terraform_remote_state.vpc.outputs.azs
+  user_data = <<-EOT
+  #!/bin/bash
+  echo "will make script or file after"
+  EOT
+
+  tags = {
+    Owner       = "user"
+    Environment = "dev"
+  }
+}
+
+
+
+module "ec2_instance" {
+  source = "../modules/ec2"
+  name = "single-instance"
+  ami = local.ami
+  instance_type = local.instance_type
+  key_name = local.key_name
+  monitoring = "true"
+  public_subnets = local.public_sub
+  private_subnets = local.private_sub
+  database_subnets = local.database_sub
+  security_group_default = local.security_group_default
+  pub = local.pub
+  priva = local.priva
+  azs = local.azs
+  
+tags = {
+  Terraform = "true"
+  Environment = "dev"
+}
+}
+
+
+### output test #################
+
+# output "test" {
+#   value = data.terraform_remote_state.vpc.outputs.private_subnets
+# }
+
+# output "security_group" {
+#   value = data.terraform_remote_state.vpc.outputs.default_security_group_id
+# }
+
+# output "azs" {
+#   value = data.terraform_remote_state.vpc.outputs.azs
+# }
