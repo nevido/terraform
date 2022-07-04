@@ -18,6 +18,25 @@ resource "aws_instance" "private" {
   key_name             = var.key_name
   monitoring           = var.monitoring
   
+  dynamic "root_block_device" {
+    for_each = var.root_block_device
+    content {
+      # delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      # iops                  = lookup(root_block_device.value, "iops", null)
+      # kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
+      # throughput            = lookup(root_block_device.value, "throughput", null)
+      # tags                  = lookup(root_block_device.value, "tags", null)
+      tags = merge(var.tags,{
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-private-root-device"
+   },
+  )
+  
+    }
+  }
+  
   tags = merge(var.tags,{
     Name = "${var.vpc_name}-${var.service_name}-private-${count.index+1}"
    },
@@ -37,6 +56,20 @@ resource "aws_instance" "pub" {
   subnet_id = element(var.public_subnets,count.index)
   key_name             = var.key_name
   monitoring           = var.monitoring
+  
+  # dynamic "root_block_device" {
+  #   for_each = var.root_block_device
+  #   content {
+  #     delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+  #     encrypted             = lookup(root_block_device.value, "encrypted", null)
+  #     iops                  = lookup(root_block_device.value, "iops", null)
+  #     kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+  #     volume_size           = lookup(root_block_device.value, "volume_size", null)
+  #     volume_type           = lookup(root_block_device.value, "volume_type", null)
+  #     throughput            = lookup(root_block_device.value, "throughput", null)
+  #     tags                  = lookup(root_block_device.value, "tags", null)
+  #   }
+  # }
   
   tags = merge(var.tags,{
     Name = "${var.vpc_name}-${var.service_name}-public-${count.index+1}"

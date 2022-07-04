@@ -20,7 +20,7 @@ locals {
   key_name = "cloud"
   ami = "ami-0e5732e0fc87ab42e"
   instance_type = "t2.micro"
-  pub = 1           # public 에 생성할 서버 수량
+  pub = 0          # public 에 생성할 서버 수량
   priva = 1         # private에 생성할 서버 수량
   owner = "jaeyonglee"
   team = "infra-1"
@@ -60,10 +60,22 @@ module "ec2_instance" {
   vpc_name = local.vpc_name
   service_name = local.service_name
   
-tags = {
-  Terraform = local.owner
-  Environment = local.team
-}
+  
+  root_block_device = [
+   {
+       volume_type = "gp2"
+       volume_size = 20
+       encrypted   = true
+      # tags = {
+      #   Name ="${local.vpc_name}-${local.service_name}-root_block_device"
+        
+      # }
+   },
+  ]
+  tags = {
+   Terraform = local.owner
+   Environment = local.team
+ }
 }
 
 
