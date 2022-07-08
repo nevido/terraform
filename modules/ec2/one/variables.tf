@@ -228,7 +228,8 @@ variable "enable_volume_tags" {
 
 variable "vpc_security_group_ids" {
   description = "A list of security group IDs to associate with"
-  type        = list(string)
+  type        = list
+ 
   default     = null
 }
 
@@ -349,17 +350,49 @@ variable "priva" {
 }
 
 
-variable "security_group" {
-  description = "A list of security group IDs to associate with"
-  type        = string
-  default     = null
-  
+variable "security_group_default" {
+  type = string
+}
+
+variable "azs" {
+  description = "A list of availability zones names or ids in the region"
+  type        = list(string)
+  default     = []
+}
+
+variable "vpc_name" {
+  type = string
+}
+
+
+variable "service_name" {
+  type = string
+}
+
+# variable "vol_count" {
+#   type  = number
+# }
+
+variable "delete_on_termination" {
+  type = bool
+}
+
+variable "encrypted" {
+  type = bool
+}
+variable "volume_type" {
+  type = string
+}
+
+variable "device_name" {
+  type = list(string)
 }
 
 variable "volume_size" {
   type = list(number)
 }
 
-variable "device_name" {
-  type = list(string)
-}
+# # variable "example" {
+# #   type = number
+# # }
+

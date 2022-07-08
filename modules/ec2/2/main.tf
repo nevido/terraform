@@ -37,26 +37,37 @@ resource "aws_instance" "private" {
     }
   }
   
-  
- dynamic "ebs_block_device" {
-    for_each = var.ebs_block_device
-    content {
-      delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-      device_name           = ebs_block_device.value.device_name
-      encrypted             = lookup(ebs_block_device.value, "encrypted", null)
-      # iops                  = lookup(ebs_block_device.value, "iops", null)
-      # kms_key_id            = lookup(ebs_block_device.value, "kms_key_id", null)
-      # snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
-      volume_size           = lookup(ebs_block_device.value, "volume_size", null)
-      volume_type           = lookup(ebs_block_device.value, "volume_type", null)
-      # throughput            = lookup(ebs_block_device.value, "throughput", null) 
-      tags = merge(var.tags,{
-        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-private-ebs-device"
+ ebs_block_device {
+
+ 
+   device_name = "/dev/sdb"
+   volume_type = var.volume_type
+   volume_size = "11"
+   encrypted = var.encrypted
+   delete_on_termination = true
+   tags = merge(var.tags,{
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-pub-ebs-1"
    },
   )
   
     }
-  }
+ 
+  
+ ebs_block_device {
+
+ 
+   device_name = "/dev/sdc"
+   volume_type = var.volume_type
+   volume_size = "12"
+   encrypted = var.encrypted
+   delete_on_termination = true
+   tags = merge(var.tags,{
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-pub-ebs-2"
+   },
+  )
+  
+    }
+  
   
   tags = merge(var.tags,{
     Name = "${var.vpc_name}-${var.service_name}-private-${count.index+1}"
@@ -96,26 +107,59 @@ resource "aws_instance" "pub" {
     }
   }
   
-  
- dynamic "ebs_block_device" {
-    for_each = var.ebs_block_device
-    content {
-      delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-      device_name           = ebs_block_device.value.device_name
-      encrypted             = lookup(ebs_block_device.value, "encrypted", null)
-      # iops                  = lookup(ebs_block_device.value, "iops", null)
-      # kms_key_id            = lookup(ebs_block_device.value, "kms_key_id", null)
-      # snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
-      volume_size           = lookup(ebs_block_device.value, "volume_size", null)
-      volume_type           = lookup(ebs_block_device.value, "volume_type", null)
-      # throughput            = lookup(ebs_block_device.value, "throughput", null) 
-      tags = merge(var.tags,{
-        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-public-ebs-device"
+
+
+ ebs_block_device {
+
+ 
+   device_name = var.device_name[0]
+   volume_type = var.volume_type
+   volume_size =  var.volume_size[0]
+   encrypted = var.encrypted
+   delete_on_termination = true
+   tags = merge(var.tags,{
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-pub-ebs-1"
    },
   )
   
     }
-  }
+ 
+  
+ ebs_block_device {
+
+ 
+   device_name = var.device_name[1]
+   volume_type = var.volume_type
+   volume_size = var.volume_size[1]
+   encrypted = var.encrypted
+   delete_on_termination = true
+   tags = merge(var.tags,{
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-pub-ebs-2"
+   },
+  )
+  
+    }
+    
+    
+# dynamic "ebs_block_device" {
+#     for_each = var.ebs_block_device
+#     content {
+#       delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
+#       device_name           = ebs_block_device.value.device_name
+#       encrypted             = lookup(ebs_block_device.value, "encrypted", null)
+#       # iops                  = lookup(ebs_block_device.value, "iops", null)
+#       # kms_key_id            = lookup(ebs_block_device.value, "kms_key_id", null)
+#       # snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
+#       volume_size           = lookup(ebs_block_device.value, "volume_size", null)
+#       volume_type           = lookup(ebs_block_device.value, "volume_type", null)
+#       # throughput            = lookup(ebs_block_device.value, "throughput", null) 
+#       tags = merge(var.tags,{
+#         Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-public-ebs-device"
+#   },
+#   )
+  
+#     }
+#   }
    
   user_data = <<-EOT
   #!/bin/bash

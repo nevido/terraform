@@ -96,33 +96,71 @@ resource "aws_instance" "pub" {
     }
   }
   
-  
+
+
+# variable "ebs_block_devices" {
+#   type = "list"
+#   default = [
+#     { device_name = "/dev/sdf", volume_type = "gp2", volume_size = "8" },
+#     { device_name = "/dev/sdg", volume_type = "gp2", volume_size = "8" },
+#   ]
+# }
+
+# example = "${merge(var.device_name,var.volume_size)}"
  dynamic "ebs_block_device" {
-    for_each = var.ebs_block_device
+    for_each =  var.volume_size
+   
+
+    
+    #count = var.vol_count
     content {
-      delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-      device_name           = ebs_block_device.value.device_name
-      encrypted             = lookup(ebs_block_device.value, "encrypted", null)
+      delete_on_termination = true
+      device_name           = var.device_name[index(var.volume_size)]
+      encrypted             = var.encrypted
+    
       # iops                  = lookup(ebs_block_device.value, "iops", null)
       # kms_key_id            = lookup(ebs_block_device.value, "kms_key_id", null)
       # snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
-      volume_size           = lookup(ebs_block_device.value, "volume_size", null)
-      volume_type           = lookup(ebs_block_device.value, "volume_type", null)
+      volume_size           = ebs_block_device.value
+      volume_type           = var.volume_type
       # throughput            = lookup(ebs_block_device.value, "throughput", null) 
       tags = merge(var.tags,{
-        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-public-ebs-device"
+        Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-public-ebs-device[count.index]"
    },
   )
   
     }
   }
    
-  user_data = <<-EOT
-  #!/bin/bash
-    sudo mkfs -t ext4 /dev/sdb
-    sudo mkdir /data
-    sudo mount /dev/sdb /data
-   EOT
+
+   
+   
+# dynamic "ebs_block_device" {
+#     for_each = var.ebs_block_device
+#     content {
+#       delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
+#       device_name           = ebs_block_device.value.device_name
+#       encrypted             = lookup(ebs_block_device.value, "encrypted", null)
+#       # iops                  = lookup(ebs_block_device.value, "iops", null)
+#       # kms_key_id            = lookup(ebs_block_device.value, "kms_key_id", null)
+#       # snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
+#       volume_size           = lookup(ebs_block_device.value, "volume_size", null)
+#       volume_type           = lookup(ebs_block_device.value, "volume_type", null)
+#       # throughput            = lookup(ebs_block_device.value, "throughput", null) 
+#       tags = merge(var.tags,{
+#         Name = "${var.vpc_name}-${var.service_name}-${count.index+1}-public-ebs-device"
+#   },
+#   )
+  
+#     }
+#   }
+   
+  # user_data = <<-EOT
+  # #!/bin/bash
+  #   sudo mkfs -t ext4 /dev/sdb
+  #   sudo mkdir /data
+  #   sudo mount /dev/sdb /data
+  # EOT
   
   tags = merge(var.tags,{
     Name = "${var.vpc_name}-${var.service_name}-public-${count.index+1}"

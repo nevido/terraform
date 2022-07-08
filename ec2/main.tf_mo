@@ -26,16 +26,15 @@ locals {
   #두번재 pub = 1, private = 0
   ########################################################################
   pub = 1          # public 에 생성할 서버 수량
-  priva = 0      # private에 생성할 서버 수량
+  priva = 0       # private에 생성할 서버 수량
   root_volume_size = 20
  # ebs_volume_count = 2   #볼륨 수
   
-  ebs_volume_size = [10]  #example [10,15,20]
-  #   source = "../modules/ec2/two" 수정 ~/one ~/two ~/three
+  ebs_volume_size = 10
   owner = "jaeyonglee"
   team = "infra-1"
 
-
+  
   
   ######### Don't touch #######################################
   public_sub =  data.terraform_remote_state.vpc.outputs.public_subnets
@@ -43,19 +42,15 @@ locals {
   database_sub = data.terraform_remote_state.vpc.outputs.database_subnets
   security_group_default = data.terraform_remote_state.vpc.outputs.default_security_group_id
   azs = data.terraform_remote_state.vpc.outputs.azs
+ 
+
 
 }
 
 
 
 module "ec2_instance" {
-  
-#   local.volume_num == 1 ? source = "../modules/ec2/one" : local.volume_num == 2 ? source = "../modules/ec2/two"  : local.volum_num == 3 ? source = "../modules/ec2/three" : 0
-  source = "../modules/ec2/one"
-  # source = "../modules/ec2/two"
-  # source = "../modules/ec2/three"
-
-#   contains(local.volume_num, "2") ? 1 : 0
+  source = "../modules/ec2"
   name = "single-instance"
   ami = local.ami
   instance_type = local.instance_type
@@ -71,7 +66,6 @@ module "ec2_instance" {
   vpc_name = local.vpc_name
   service_name = local.service_name
   
-#   volume_num = local.volum_num
   
   root_block_device = [
    {
@@ -86,16 +80,29 @@ module "ec2_instance" {
    },
   ]
   
+  
+  vol_count = 2
   delete_on_termination = true
   encrypted   = true
-       
+  
   volume_type = "standard"
 
-  volume_size = local.ebs_volume_size
-  device_name = ["/dev/sdb","/dev/sdc","/dev/sdd"]
+  volume_size = [10,15]
+  device_name = ["/dev/sdb","/dev/sdc"]
 
-  
-
+  # ebs_block_device = [
+  # {
+  #     volume_type = "standard"
+  #     volume_size = local.ebs_volume_size
+  #     encrypted   = true
+  #     delete_on_termination = true
+  #     device_name = "/dev/sdb"
+  #     # tags = {
+  #     #   Name ="${local.vpc_name}-${local.service_name}-root_block_device"
+        
+  #     # }
+  # },
+  # ]
   
   
   tags = {
@@ -118,5 +125,3 @@ module "ec2_instance" {
 # output "azs" {
 #   value = data.terraform_remote_state.vpc.outputs.azs
 # }
-
-

@@ -368,3 +368,31 @@ variable "vpc_name" {
 variable "service_name" {
   type = string
 }
+
+variable "vol_count" {
+  type  = number
+}
+
+variable "delete_on_termination" {
+  type = bool
+}
+
+variable "encrypted" {
+  type = bool
+}
+variable "volume_type" {
+  type = string
+}
+
+variable "device_name" {
+  type = list(string)
+}
+
+variable "volume_size" {
+  type = list(number)
+}
+
+# variable "example" {
+#   type = number
+# }
+
