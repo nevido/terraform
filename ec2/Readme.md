@@ -18,15 +18,15 @@ data "terraform_remote_state" "vpc" {
 ```
 
 >사용자 입력 부분 
+
 >> 주의사항 : ebs 생성시 용량이나 볼륨수를 pub와  priva를 다르게 가져가길 바랄경우 : 개별 실행
+
 >> module부분에서는 EBS 볼륨수 만큼 RESOURCE (aws_instance) x 2 가 생성됨(public, private)
+
 >> EBS MAX VOLUMES = 3
 
 ``` bash
-### 사용자 입력 부분 ###
 
-
-### 사용자 입력 부분 ###
 
 locals {
   name   = "example-ec2-complete"
