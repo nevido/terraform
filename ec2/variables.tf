@@ -40,3 +40,14 @@
 # variable  "instance_type" {
 #   type = string
 # }
+
+variable "project_source1" {
+  default = "../modules/ec2/one"
+}
+variable "project_source2" {
+  default = "../modules/ec2/two"
+}
+
+variable "project_source3" {
+  default = "../modules/ec2/three"
+}

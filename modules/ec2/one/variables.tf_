@@ -388,11 +388,31 @@ variable "device_name" {
   type = list(string)
 }
 
-# variable "volume_size" {
-#   type = list(number)
-# }
+variable "volume_size" {
+  type = list(number)
+}
 
 # # variable "example" {
 # #   type = number
 # # }
 
+
+variable "project_source1" {
+  default = "../modules/ec2/one"
+}
+variable "project_source2" {
+  default = "../modules/ec2/two"
+}
+
+variable "project_source3" {
+  default = "../modules/ec2/three"
+}
+
+
+variable "ebs_volume_size" {
+  type = list(number)
+}
+
+# variable "volume_size" {
+#   type = list(number)
+# }

@@ -30,32 +30,25 @@ locals {
   root_volume_size = 20
  # ebs_volume_count = 2   #볼륨 수
   
-  ebs_volume_size = [10]  #example [10,15,20]
-  #   source = "../modules/ec2/two" 수정 ~/one ~/two ~/three
+  ebs_volume_size = [10,14,15]  #example [10,15,20]
+  #   source = "../modules/ec2/two" 수정 ~/one ~/tow
   owner = "jaeyonglee"
   team = "infra-1"
 
 
-  
   ######### Don't touch #######################################
   public_sub =  data.terraform_remote_state.vpc.outputs.public_subnets
   private_sub = data.terraform_remote_state.vpc.outputs.private_subnets
   database_sub = data.terraform_remote_state.vpc.outputs.database_subnets
   security_group_default = data.terraform_remote_state.vpc.outputs.default_security_group_id
   azs = data.terraform_remote_state.vpc.outputs.azs
-
+  volume_num = 2
 }
 
 
 
 module "ec2_instance" {
-  
-#   local.volume_num == 1 ? source = "../modules/ec2/one" : local.volume_num == 2 ? source = "../modules/ec2/two"  : local.volum_num == 3 ? source = "../modules/ec2/three" : 0
   source = "../modules/ec2/one"
-  # source = "../modules/ec2/two"
-  # source = "../modules/ec2/three"
-
-#   contains(local.volume_num, "2") ? 1 : 0
   name = "single-instance"
   ami = local.ami
   instance_type = local.instance_type
@@ -70,8 +63,6 @@ module "ec2_instance" {
   azs = local.azs
   vpc_name = local.vpc_name
   service_name = local.service_name
-  
-#   volume_num = local.volum_num
   
   root_block_device = [
    {
@@ -93,30 +84,10 @@ module "ec2_instance" {
 
   volume_size = local.ebs_volume_size
   device_name = ["/dev/sdb","/dev/sdc","/dev/sdd"]
-
-  
-
-  
-  
   tags = {
    Terraform = local.owner
    Environment = local.team
  }
 }
-
-
-### output test #################
-
-# output "test" {
-#   value = data.terraform_remote_state.vpc.outputs.private_subnets
-# }
-
-# output "security_group" {
-#   value = data.terraform_remote_state.vpc.outputs.default_security_group_id
-# }
-
-# output "azs" {
-#   value = data.terraform_remote_state.vpc.outputs.azs
-# }
 
 
