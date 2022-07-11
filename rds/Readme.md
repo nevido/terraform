@@ -2,9 +2,9 @@
 
 구성도 
 
-![RDS](https://cdn-ssl-devio-img.classmethod.jp/wp-content/uploads/2021/03/AWS-2tier-Networking-640x525.png)
+![RDS](../img/RDS.PNG)
 
-===
+---
 * VPC X 1
 * EC2 X 1
 * RDS X 1
