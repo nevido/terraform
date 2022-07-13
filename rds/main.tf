@@ -22,6 +22,8 @@ locals {
   instance_class = "db.t4g.large"   #db.t4g.large
   allocated_storage = 20
   max_allocated_storage = 40
+  storage_type = "gp2"
+  storage_encrypted = true
   db_name = "nevido"
   user_name = "nevido"
   port = 3306
@@ -103,7 +105,8 @@ module "db_instance" {
   
   allocated_storage = local.allocated_storage
   max_allocated_storage = local.max_allocated_storage
-  
+  storage_type = local.storage_type
+  storage_encrypted = local.storage_encrypted
   db_name = local.db_name
   username = local.user_name
   password = local.password
